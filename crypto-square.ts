@@ -7,42 +7,15 @@ export class Crypto {
   
   get ciphertext(): string {
     // Remove spaces, punctuation, and set to lower case
-    let cipherText = this.plaintext.toLowerCase().replace(/[.,/#!$%@^&*;:{}=\-_`~()]/g,"").split(" ").join("");
-    console.log(cipherText)
+    let cipherText = this.plaintext.toLowerCase().replace(/[.,/#!$%@^&*;:{}=\-_`~()]/g,"").split(" ").join("")
 
-    const cipherSquare: string[] = [];
-    let cipherSquareSize = Math.ceil(Math.sqrt(cipherText.length));
-
-    let iterations = Number.isInteger(Math.sqrt(cipherText.length)) ? cipherSquareSize : cipherSquareSize - 1
-    for (let i = 0; i < iterations; i++) {
-      let splitWord = cipherText.slice(i * cipherSquareSize, (i * cipherSquareSize) + cipherSquareSize)
-      console.log(splitWord.length, cipherSquareSize)
-      if (splitWord.length < cipherSquareSize) {
-        console.log(cipherSquareSize - splitWord.length)
-        for (let j = 0; j <= cipherSquareSize - splitWord.length; j++) {
-          console.log(j)
-          splitWord += " "
-        }
-      }
-      cipherSquare.push(splitWord);
+    if (!cipherText) {
+      return ""
     }
-    console.log(cipherSquare)
+    let cipherSquareSize = Math.ceil(Math.sqrt(cipherText.length))
+    let cipherRows = cipherText.match(new RegExp(`.{1,${cipherSquareSize}}`, 'g'))?.map(row => row.padEnd(cipherSquareSize)) ?? []
+    let cipherColumns = [...new Array(cipherSquareSize).keys()].map((i) => cipherRows.map((row) => row[i]).join(''))
 
-    let encodedString = ""
-    for (let i = 0; i <= cipherSquare.length; i++) {
-      for (let j = 0; j < cipherSquare.length; j++) {
-        encodedString += cipherSquare[j][i]
-      }
-    }
-    console.log(encodedString)
-    // for (let i = 0; i < cipherSquare.length - 1; i++) {
-    //   cipherSquare[i] = cipherSquare.map((word) => {
-    //     return word[i]
-    //   }).join("")
-    // }
-    // console.log(cipherSquare.join(""))
-
-
-    return cipherSquare.join(" ");
+    return cipherColumns.join(" ");
   }
 }
